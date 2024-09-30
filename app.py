@@ -36,6 +36,19 @@ with st.sidebar:
     st.button('Clear Screen', on_click=clear_screen)
 
 
+def get_conversation_history():
+    """
+    Concatenate all previous conversation messages into a single string.
+    """
+    conversation = ""
+    for message in st.session_state.chat_history:
+        role = "User" if message["role"] == "Human" else "AI"
+        conversation += f"{role}: {message['content']}\n"
+    return conversation
+
+
+
+
 # Function to call the API
 def call_api(chat_history):
     # Replace with your actual API endpoint
@@ -46,19 +59,12 @@ def call_api(chat_history):
     #post API
     api_url = "https://8114cdz0v4.execute-api.us-east-1.amazonaws.com/dev/"
 
-    template = """
-    Answer the following questions considering the history of the conversation:
+    prompt_with_history = {"conversation": chat_history}
 
-    Chat history: {chat_history}
-
-    User question: {query}
-    """
-
-    chat_history_json = {"conversation": chat_history}
 
 
     try:
-        response = requests.post(api_url, json=chat_history_json)
+        response = requests.post(api_url, json=prompt_with_history)
         response.raise_for_status()  # Raise an exception for bad status codes
         return response.json()  # This should now work correctly
 
@@ -99,13 +105,27 @@ if prompt := st.chat_input("What is up?"):
         st.warning("Streaming is not supported in this example.")
     else:
 
-        response = call_api(st.session_state.chat_history)
+        conversation_history = get_conversation_history()
+
+        result = call_api(conversation_history)
+
+        assistant_response = result.get('generated_response')
 
         with st.chat_message("AI"):
-            st.write(response)
+            st.write(assistant_response)
+
+            with st.expander("See Details"):
+                st.json({
+                    "Reference": result.get('referenced_document', 'N/A'),
+                    "Status Code": result.get('statusCode', 'N/A'),
+                    "Source": result.get('file_location', 'N/A')
 
 
-        st.session_state.chat_history.append({"role": "AI", "content": response})
+
+                })
+
+
+        st.session_state.chat_history.append({"role": "AI", "content": assistant_response})
 
         # # Chain - Invoke the API using the call_api function
         # with st.chat_message("assistant"):
