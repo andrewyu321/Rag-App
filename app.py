@@ -92,6 +92,13 @@ for message in st.session_state.chat_history:
 # React to user input
 if prompt := st.chat_input("What is up?"):
 
+
+    #creates conversation history to be used for assisstant response
+    conversation_history = get_conversation_history()
+
+
+
+
     #adds prompt to chat history
     st.session_state.chat_history.append({"role": "Human", "content": prompt})
 
@@ -105,7 +112,9 @@ if prompt := st.chat_input("What is up?"):
         st.warning("Streaming is not supported in this example.")
     else:
 
-        conversation_history = get_conversation_history()
+
+
+        conversation_history += f"\n\n Above this statement is the conversation history. \n\n User Question: {prompt}. You can use the conversation if helpful but if not"
 
         result = call_api(conversation_history)
 
