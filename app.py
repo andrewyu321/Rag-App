@@ -21,7 +21,11 @@ from langchain_core.prompts import ChatPromptTemplate
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
-
+# Initialize session state for chat history
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+        {"role": "AI", "content": "Hello, I am a bot. How can I help you?"},
+    ]
 
 def clear_screen():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
