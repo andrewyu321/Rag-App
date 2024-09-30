@@ -46,11 +46,20 @@ def get_conversation_history():
         conversation += f"{role}: {message['content']}\n"
     return conversation
 
-
+def typewriter_effect(text, speed=0.05):
+    """
+    Display the text with a typewriter effect (one character at a time).
+    """
+    placeholder = st.empty()  # Create a placeholder to update the text dynamically
+    typed_text = ""
+    for char in text:
+        typed_text += char
+        placeholder.markdown(typed_text)  # Update the placeholder with the current text
+        time.sleep(speed)  # Pause between characters to create the typing effect
 
 
 # Function to call the API
-def call_api(chat_history):
+def call_api(chat_history, prompt):
     # Replace with your actual API endpoint
 
     #get api
@@ -59,7 +68,9 @@ def call_api(chat_history):
     #post API
     api_url = "https://8114cdz0v4.execute-api.us-east-1.amazonaws.com/dev/"
 
-    prompt_with_history = {"conversation": chat_history}
+    prompt_with_history = {"conversation": chat_history,
+                           "prompt": prompt
+                           }
 
 
 
@@ -114,20 +125,22 @@ if prompt := st.chat_input("What is up?"):
 
 
 
-        conversation_history += f"\n\n Above this statement is the conversation history. \n\n User Question: {prompt}. You can use the conversation if helpful but if not"
-
-        result = call_api(conversation_history)
+        result = call_api(conversation_history, prompt)
 
         assistant_response = result.get('generated_response')
 
         with st.chat_message("AI"):
-            st.write(assistant_response)
+            #st.write_stream(assistant_response)
+
+            typewriter_effect(assistant_response)
 
             with st.expander("See Details"):
                 st.json({
-                    "Reference": result.get('referenced_document', 'N/A'),
+                    # "Reference": result.get('referenced_document', conversation_history),
+                    "Referenced Document": result.get('referenced_document'),
                     "Status Code": result.get('statusCode', 'N/A'),
                     "Source": result.get('file_location', 'N/A')
+
 
 
 
