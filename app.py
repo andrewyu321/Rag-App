@@ -6,7 +6,7 @@ import time
 import os
 from dotenv import load_dotenv, dotenv_values
 
-
+##hello hello
 load_dotenv()
 
 
@@ -33,7 +33,7 @@ with st.sidebar:
 
 def get_conversation_history():
     """
-    Concatenate all previous conversation messages into a single string.
+    Concatenate all previous conversation messages into a single string
     """
     conversation = ""
     for message in st.session_state.chat_history:
