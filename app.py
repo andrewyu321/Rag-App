@@ -3,14 +3,10 @@ import requests
 import json
 # from streamlit_lottie import st_lottie
 import time
-import os
-from dotenv import load_dotenv, dotenv_values
 
+api_url = st.secrets["API_KEY"]
 ##hello hello
-load_dotenv()
 
-
-api_url = os.getenv("MY_SECRET_KEY")
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
