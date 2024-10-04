@@ -3,8 +3,14 @@ import requests
 import json
 # from streamlit_lottie import st_lottie
 import time
+import os
+from dotenv import load_dotenv, dotenv_values
 
 
+load_dotenv()
+
+
+api_url = os.getenv("MY_SECRET_KEY")
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
@@ -51,11 +57,6 @@ def typewriter_effect(text, speed=0.05):
 def call_api(chat_history, prompt, chunk_type):
     # Replace with your actual API endpoint
 
-    #get api
-    #api_url = "https://8114cdz0v4.execute-api.us-east-1.amazonaws.com/dev/"
-
-    #post API
-    api_url = "https://mojcyfvo4a.execute-api.us-east-1.amazonaws.com/dev/bedrock-chatbot"
 
     prompt_with_history = {"conversation": chat_history,
                            "prompt": prompt,
