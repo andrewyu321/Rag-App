@@ -4,19 +4,6 @@ import json
 # from streamlit_lottie import st_lottie
 import time
 
-import logging
-
-from typing import List, Dict
-from pydantic import BaseModel
-from operator import itemgetter
-from langchain_core.messages import AIMessage, HumanMessage
-
-from langchain_core.prompts import ChatPromptTemplate
-
-
-#hahahha
-
-
 
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
@@ -32,8 +19,10 @@ def clear_screen():
 
 with st.sidebar:
     st.title("BA Group LLM Assistant")
-    streaming_on = st.toggle('Streaming')
     st.button('Clear Screen', on_click=clear_screen)
+
+    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking"], index=0)
+
 
 
 def get_conversation_history():
@@ -59,17 +48,18 @@ def typewriter_effect(text, speed=0.05):
 
 
 # Function to call the API
-def call_api(chat_history, prompt):
+def call_api(chat_history, prompt, chunk_type):
     # Replace with your actual API endpoint
 
     #get api
     #api_url = "https://8114cdz0v4.execute-api.us-east-1.amazonaws.com/dev/"
 
     #post API
-    api_url = "https://8114cdz0v4.execute-api.us-east-1.amazonaws.com/dev/"
+    api_url = "https://mojcyfvo4a.execute-api.us-east-1.amazonaws.com/dev/bedrock-chatbot"
 
     prompt_with_history = {"conversation": chat_history,
-                           "prompt": prompt
+                           "prompt": prompt,
+                           "chunk_type": chunk_type
                            }
 
 
@@ -118,57 +108,50 @@ if prompt := st.chat_input("What is up?"):
         st.write(prompt)
 
 
-    if streaming_on:
-
-        st.warning("Streaming is not supported in this example.")
-    else:
-
-
-
-        result = call_api(conversation_history, prompt)
-
-        assistant_response = result.get('generated_response')
-
-        with st.chat_message("AI"):
-            #st.write_stream(assistant_response)
-
-            typewriter_effect(assistant_response)
-
-            with st.expander("See Details"):
-                st.json({
-                    # "Reference": result.get('referenced_document', conversation_history),
-                    "Referenced Document": result.get('referenced_document'),
-                    "Status Code": result.get('statusCode', 'N/A'),
-                    "Source": result.get('file_location', 'N/A')
 
 
 
 
+    result = call_api(conversation_history, prompt, chunk_type)
+
+    assistant_response = result.get('generated_responses')
+
+    with st.chat_message("AI"):
+        st.write(assistant_response)
+
+
+
+        with st.expander("See Details"):
+            st.json({
+                # "Reference": result.get('referenced_document', conversation_history),
+                "Referenced Document": result.get('referenced_document'),
+                "Status Code": result.get('statusCode', 'N/A'),
+                "Source": result.get('prompt', 'N/A')
                 })
 
 
-        st.session_state.chat_history.append({"role": "AI", "content": assistant_response})
+    st.session_state.chat_history.append({"role": "AI", "content": assistant_response})
 
-        # # Chain - Invoke the API using the call_api function
-        # with st.chat_message("assistant"):
-        #     result = call_api(prompt, st.session_state.chat_history)
-        #     if result:
-        #         assistant_response = result.get('generated_response')
-        #
-        #         # Display the assistant's response
-        #         st.write(assistant_response)
-        #
-        #         with st.expander("See details"):
-        #             st.json({
-        #                 "Reference": result.get('referenced_document', 'N/A'),
-        #                 "Status Code": result.get('statusCode', 'N/A'),
-        #                 "Source": result.get('file_location', 'N/A')
-        #             })
-        #
-        #         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
-        #     else:
-        #         st.error("Failed to get a response from the API")
-        #         st.write(st.session_state.chat_history)
+    # # Chain - Invoke the API using the call_api function
+    # with st.chat_message("assistant"):
+    #     result = call_api(prompt, st.session_state.chat_history)
+    #     if result:
+    #         assistant_response = result.get('generated_response')
+    #
+    #         # Display the assistant's response
+    #         st.write(assistant_response)
+    #
+    #         with st.expander("See details"):
+    #             st.json({
+    #                 "Reference": result.get('referenced_document', 'N/A'),
+    #                 "Status Code": result.get('statusCode', 'N/A'),
+    #                 "Source": result.get('file_location', 'N/A')
+    #             })
+    #
+    #         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
+    #     else:
+    #         st.error("Failed to get a response from the API")
+    #         st.write(st.session_state.chat_history)
 
 
 
