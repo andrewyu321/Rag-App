@@ -13,7 +13,7 @@ load_dotenv()
 if "API_KEY" in st.secrets:
     api_url = st.secrets["API_KEY"]
 else:
-    # For local development, use the environment variable
+
     api_url = os.getenv("MY_SECRET_KEY")
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
