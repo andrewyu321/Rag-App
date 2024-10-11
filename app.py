@@ -9,8 +9,12 @@ from dotenv import load_dotenv, dotenv_values
 ##hello hello
 load_dotenv()
 
-
-api_url = os.getenv("MY_SECRET_KEY")
+# Check if running in Streamlit's production environment (e.g., on Streamlit Cloud)
+if "API_KEY" in st.secrets:
+    api_url = st.secrets["API_KEY"]
+else:
+    # For local development, use the environment variable
+    api_url = os.getenv("MY_SECRET_KEY")
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
@@ -27,7 +31,7 @@ with st.sidebar:
     st.title("BA Group LLM Assistant")
     st.button('Clear Screen', on_click=clear_screen)
 
-    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking"], index=0)
+    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere"], index=0)
 
 
 
