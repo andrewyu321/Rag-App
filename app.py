@@ -10,10 +10,11 @@ from dotenv import load_dotenv, dotenv_values
 load_dotenv()
 
 # Check if running in Streamlit's production environment (e.g., on Streamlit Cloud)
-if "API_KEY" in st.secrets:
+try:
+    # Try to get the API key from Streamlit secrets
     api_url = st.secrets["API_KEY"]
-else:
-
+except (KeyError, FileNotFoundError):
+    # If there's a KeyError or FileNotFoundError (no `secrets.toml`), fallback to environment variable
     api_url = os.getenv("MY_SECRET_KEY")
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
