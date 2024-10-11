@@ -6,7 +6,7 @@ import time
 import os
 from dotenv import load_dotenv, dotenv_values
 
-##hello hello
+
 load_dotenv()
 
 # Check if running in Streamlit's production environment (e.g., on Streamlit Cloud)
