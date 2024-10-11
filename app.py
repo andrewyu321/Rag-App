@@ -133,7 +133,7 @@ if prompt := st.chat_input("What is up?"):
                 # "Reference": result.get('referenced_document', conversation_history),
                 "Referenced Document": result.get('referenced_document'),
                 "Status Code": result.get('statusCode', 'N/A'),
-                "Source": result.get('prompt', 'N/A')
+                "Source": result.get('file_location', 'N/A')
                 })
 
 
