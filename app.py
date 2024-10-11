@@ -7,17 +7,18 @@ import os
 from dotenv import load_dotenv, dotenv_values
 
 
-load_dotenv()
 
-# Check if running in Streamlit's production environment (e.g., on Streamlit Cloud)
+
+
+st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
+
+load_dotenv()
 try:
     # Try to get the API key from Streamlit secrets
     api_url = st.secrets["API_KEY"]
 except (KeyError, FileNotFoundError):
     # If there's a KeyError or FileNotFoundError (no `secrets.toml`), fallback to environment variable
     api_url = os.getenv("MY_SECRET_KEY")
-
-st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
 # Initialize session state for chat history
 if "chat_history" not in st.session_state:
