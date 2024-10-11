@@ -33,7 +33,10 @@ with st.sidebar:
     st.title("BA Group LLM Assistant")
     st.button('Clear Screen', on_click=clear_screen)
 
-    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere"], index=0)
+    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere"], index=0)
+
+    conversation_toggle = st.toggle("Conversational Memory")
+
 
 
 
@@ -69,6 +72,16 @@ def call_api(chat_history, prompt, chunk_type):
                            "chunk_type": chunk_type
                            }
 
+    if conversation_toggle:
+        prompt_with_history = {"conversation": chat_history,
+                               "prompt": prompt,
+                               "chunk_type": chunk_type
+                               }
+    else:
+        prompt_with_history = {"conversation": "",
+                               "prompt": prompt,
+                               "chunk_type": chunk_type
+                               }
 
 
     try:
