@@ -8,8 +8,6 @@ from dotenv import load_dotenv, dotenv_values
 
 
 
-
-
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
 
 load_dotenv()
@@ -34,8 +32,11 @@ with st.sidebar:
     st.button('Clear Screen', on_click=clear_screen)
 
     chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere"], index=0)
-
+    model_type = st.radio("Foundation Model",
+                          ["Amazon Titan Text Express", "Claude 3 Haiku"], index=0)
     conversation_toggle = st.toggle("Conversational Memory")
+
+
 
 
 
@@ -63,7 +64,7 @@ def typewriter_effect(text, speed=0.05):
 
 
 # Function to call the API
-def call_api(chat_history, prompt, chunk_type):
+def call_api(chat_history, prompt, chunk_type, model_type):
     # Replace with your actual API endpoint
 
 
@@ -75,12 +76,14 @@ def call_api(chat_history, prompt, chunk_type):
     if conversation_toggle:
         prompt_with_history = {"conversation": chat_history,
                                "prompt": prompt,
-                               "chunk_type": chunk_type
+                               "chunk_type": chunk_type,
+                               "model": model_type
                                }
     else:
         prompt_with_history = {"conversation": "",
                                "prompt": prompt,
-                               "chunk_type": chunk_type
+                               "chunk_type": chunk_type,
+                               "model": model_type
                                }
 
 
@@ -127,12 +130,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("Human"):
         st.write(prompt)
 
-
-
-
-
-
-    result = call_api(conversation_history, prompt, chunk_type)
+    result = call_api(conversation_history, prompt, chunk_type, model_type)
 
     assistant_response = result.get('generated_responses')
 
@@ -145,7 +143,7 @@ if prompt := st.chat_input("What is up?"):
             st.json({
                 # "Reference": result.get('referenced_document', conversation_history),
                 "Referenced Document": result.get('referenced_document'),
-                "Status Code": result.get('statusCode', 'N/A'),
+                "Status Code": result.get('statusCode'),
                 "Source": result.get('file_location', 'N/A')
                 })
 
