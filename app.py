@@ -23,7 +23,7 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         {"role": "AI", "content": "Hello, I am a bot. How can I help you?"},
     ]
-
+#ds
 def clear_screen():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
