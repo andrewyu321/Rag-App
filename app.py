@@ -31,9 +31,9 @@ with st.sidebar:
     st.title("BA Group LLM Assistant")
     st.button('Clear Screen', on_click=clear_screen)
 
-    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere", "Semantic Chunking With Cohere OpenSearch", "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"], index=0)
+    chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere", "Semantic Chunking With Cohere OpenSearch", "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval (If you want Adrian to be REALLY broke)"], index=0)
     model_type = st.radio("Foundation Model",
-                          ["Claude 3.5 Sonnet v2", "Cohere Command R"], index=0)
+                          ["Claude 3.5 Sonnet v2 (If you want to make Adrian go broke)", "Cohere Command R"], index=0)
     conversation_toggle = st.toggle("Conversational Memory")
 
 
