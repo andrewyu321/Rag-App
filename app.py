@@ -33,7 +33,7 @@ with st.sidebar:
 
     chunk_type = st.radio("Chunking Strategy", ["Semantic chunking", "Hierarchical chunking", "Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere", "Semantic Chunking With Cohere OpenSearch", "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"], index=0)
     model_type = st.radio("Foundation Model",
-                          ["Amazon Titan Text Express", "Cohere Command R"], index=0)
+                          ["Claude 3.5 Sonnet v2", "Cohere Command R"], index=0)
     conversation_toggle = st.toggle("Conversational Memory")
 
 
