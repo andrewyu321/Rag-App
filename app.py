@@ -36,6 +36,12 @@ with st.sidebar:
                           ["Claude 3.5 Sonnet v2", "Cohere Command R"], index=0)
     conversation_toggle = st.toggle("Conversational Memory")
 
+    num_results = st.number_input(
+        "Number of Sources", value=5, placeholder="Type a number", max_value=10, min_value=1
+    )
+
+
+
 
 
 
@@ -64,7 +70,7 @@ def typewriter_effect(text, speed=0.05):
 
 
 # Function to call the API
-def call_api(chat_history, prompt, chunk_type, model_type):
+def call_api(chat_history, prompt, chunk_type, model_type, num_results):
     # Replace with your actual API endpoint
 
 
@@ -77,16 +83,18 @@ def call_api(chat_history, prompt, chunk_type, model_type):
         prompt_with_history = {"conversation": chat_history,
                                "prompt": prompt,
                                "chunk_type": chunk_type,
-                               "model": model_type
+                               "model": model_type,
+                               "num_results": num_results
                                }
+
+
     else:
         prompt_with_history = {"conversation": "",
                                "prompt": prompt,
                                "chunk_type": chunk_type,
-                               "model": model_type
+                               "model": model_type,
+                               "num_results": num_results
                                }
-
-
     try:
         response = requests.post(api_url, json=prompt_with_history)
         response.raise_for_status()  # Raise an exception for bad status codes
@@ -130,7 +138,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("Human"):
         st.write(prompt)
 
-    result = call_api(conversation_history, prompt, chunk_type, model_type)
+    result = call_api(conversation_history, prompt, chunk_type, model_type, num_results)
 
     assistant_response = result.get('generated_responses')
 
