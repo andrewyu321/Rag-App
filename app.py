@@ -9,7 +9,6 @@ from dotenv import load_dotenv, dotenv_values
 
 
 st.set_page_config(page_title="BA Group LLM", page_icon="🧠", layout="wide")
-
 load_dotenv()
 try:
     # Try to get the API key from Streamlit secrets
@@ -28,17 +27,38 @@ def clear_screen():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
 with st.sidebar:
-    st.title("BA Group LLM Assistant")
+    st.image("bagroup_logo.png")
+    st.markdown("This is a preliminary test version of a BA Group AI Assistant tool")
     st.button('Clear Screen', on_click=clear_screen)
 
-    chunk_type = st.radio("Chunking Strategy", ["Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere", "Semantic Chunking With Cohere OpenSearch", "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"], index=0)
-    model_type = st.radio("Foundation Model",
-                          ["Claude 3.5 Sonnet v2", "Cohere Command R"], index=0)
-    conversation_toggle = st.toggle("Conversational Memory")
+    # chunk_type = st.radio("Chunking Strategy", ["Semantic Chunking With Cohere", "Hierarchal Chunking With Cohere", "Semantic Chunking With Cohere OpenSearch", "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"], index=0)
+    # model_type = st.radio("Foundation Model",
+    #                       ["Claude 3.5 Sonnet v2", "Cohere Command R"], index=0)
+    # conversation_toggle = st.toggle("Conversational Memory")
+    #
+    # num_results = st.number_input(
+    #     "Number of Sources", value=5, placeholder="Type a number", max_value=10, min_value=1
+    # )
+    st.header("1. Informational Purposes Only")
 
-    num_results = st.number_input(
-        "Number of Sources", value=5, placeholder="Type a number", max_value=10, min_value=1
-    )
+    st.markdown("This app is designed to help assist consultants with general queries. The information generated may not always be accurate, complete, or up-to-date. It is recommended to critically review information before making decisions based on the AI's responses.")
+
+
+    st.header("2. Data Sources and Limitations")
+
+    st.markdown("This AI system relies on a knowledgebase that may have limitations in terms of scope and accuracy. Due to limitations in data sources, the AI may not be able to provide a comprehensive response to every query")
+
+
+
+
+#hard coded parameters
+chunk_type = "Semantic Chunking With Cohere"
+model_type = "Claude 3.5 Sonnet v2"
+
+num_results = 8
+conversation_toggle = False
+
+
 
 
 
