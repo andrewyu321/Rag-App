@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv, dotenv_values
 
 
-#tab
+#tabs
 st.set_page_config(page_title="BA Group AI Assistant", page_icon="logo.jpg", layout="wide")
 load_dotenv()
 try:
