@@ -52,7 +52,7 @@ with st.sidebar:
 
 
 #hard coded parameters
-chunk_type = "Semantic Chunking With Cohere"
+chunk_type = "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"
 model_type = "Claude 3.5 Sonnet v2"
 
 num_results = 8
