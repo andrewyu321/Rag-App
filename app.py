@@ -6,15 +6,27 @@ import time
 import os
 from dotenv import load_dotenv, dotenv_values
 
+import boto3
 
-#tabs
+
+#tab
 st.set_page_config(page_title="BA Group AI Assistant", page_icon="logo.jpg", layout="wide")
 load_dotenv()
+
+aws_access_key_id = st.secrets["aws_access_key_id"]
+
+aws_secret_access_key = st.secrets["aws_secret_access_key"]
+
+region_name = st.secrets["region_name"]
+
+
+
 try:
     # Try to get the API key from Streamlit secrets
     api_url = st.secrets["API_KEY"]
 except (KeyError, FileNotFoundError):
     # If there's a KeyError or FileNotFoundError (no `secrets.toml`), fallback to environment variable
+    print("okay")
     api_url = os.getenv("MY_SECRET_KEY")
 
 # Initialize session state for chat history
@@ -22,7 +34,48 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         {"role": "AI", "content": "Hello, I am a bot. How can I help you?"},
     ]
-#ds
+
+
+
+def send_prompt_to_bedrock(prompt):
+    client = boto3.client(
+        service_name='bedrock-runtime',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        region_name=region_name
+    )
+
+    # Set the model ID, e.g., Claude 3 Haiku.
+    model_id = "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+
+    # Format the request payload using the model's native structure.
+    native_request = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 1000,
+        "temperature": 0.5,
+        "messages": [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": prompt}],
+            }
+        ],
+    }
+
+    # Convert the native request to JSON.
+    request = json.dumps(native_request)
+
+    # Invoke the model with the request.
+    streaming_response = client.invoke_model_with_response_stream(
+        modelId=model_id, body=request
+    )
+
+    # Extract and yield response text progressively.
+    for event in streaming_response["body"]:
+        chunk = json.loads(event["chunk"]["bytes"])
+        if chunk["type"] == "content_block_delta":
+            yield chunk["delta"].get("text", "")
+
+
 def clear_screen():
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
@@ -52,7 +105,7 @@ with st.sidebar:
 
 
 #hard coded parameters
-chunk_type = "Semantic Chunking With Cohere OpenSearch & Small to Big Retrieval"
+chunk_type = "Semantic Chunking With Cohere"
 model_type = "Claude 3.5 Sonnet v2"
 
 num_results = 8
@@ -148,9 +201,6 @@ if prompt := st.chat_input("What is up?"):
     #creates conversation history to be used for assisstant response
     conversation_history = get_conversation_history()
 
-
-
-
     #adds prompt to chat history
     st.session_state.chat_history.append({"role": "Human", "content": prompt})
 
@@ -160,10 +210,18 @@ if prompt := st.chat_input("What is up?"):
 
     result = call_api(conversation_history, prompt, chunk_type, model_type, num_results)
 
-    assistant_response = result.get('generated_responses')
+    assistant_response = result.get('prompt')
 
     with st.chat_message("AI"):
-        st.write(assistant_response)
+
+        result_container = st.empty()
+
+        result_text = ""
+
+        for chunk in send_prompt_to_bedrock(result.get('prompt_w_context')):
+            result_text += chunk  # Accumulate the response
+
+            result_container.markdown(result_text)  # Display each response as a new section
 
 
 
@@ -175,29 +233,8 @@ if prompt := st.chat_input("What is up?"):
                 "Source": result.get('file_location', 'N/A')
                 })
 
+    st.session_state.chat_history.append({"role": "AI", "content": result_text})
 
-    st.session_state.chat_history.append({"role": "AI", "content": assistant_response})
-
-    # # Chain - Invoke the API using the call_api function
-    # with st.chat_message("assistant"):
-    #     result = call_api(prompt, st.session_state.chat_history)
-    #     if result:
-    #         assistant_response = result.get('generated_response')
-    #
-    #         # Display the assistant's response
-    #         st.write(assistant_response)
-    #
-    #         with st.expander("See details"):
-    #             st.json({
-    #                 "Reference": result.get('referenced_document', 'N/A'),
-    #                 "Status Code": result.get('statusCode', 'N/A'),
-    #                 "Source": result.get('file_location', 'N/A')
-    #             })
-    #
-    #         st.session_state.messages.append({"role": "assistant", "content": assistant_response})
-    #     else:
-    #         st.error("Failed to get a response from the API")
-    #         st.write(st.session_state.chat_history)
 
 
 
